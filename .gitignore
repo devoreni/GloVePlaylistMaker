@@ -1,1 +1,6 @@
 .venv
+.idea
+
+/mp3s/*.mp3
+/mp3s/*.m4a
+/mp3s/*.wav
