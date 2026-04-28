@@ -1,6 +1,10 @@
 .venv
 .idea
 
-/mp3s/*.mp3
-/mp3s/*.m4a
-/mp3s/*.wav
+/processed/*.mp3
+/processed/*.m4a
+/processed/*.wav
+
+/unprocessed/*.mp3
+/unprocessed/*.m4a
+/unprocessed/*.wav
