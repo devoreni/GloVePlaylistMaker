@@ -1,5 +1,5 @@
 create table if not exists schema_version (
-    version integer primary key
+    version integer primary key,
     description text
     );
 

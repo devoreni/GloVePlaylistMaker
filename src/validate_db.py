@@ -1,6 +1,6 @@
 import sqlite3
 from pathlib import Path
-from config import MIGRATIONS_DIR
+from src.config import MIGRATIONS_DIR
 
 def get_current_version(conn: sqlite3.Connection) -> int:
     try:

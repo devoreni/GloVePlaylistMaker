@@ -1,6 +1,7 @@
 import os
 import sqlite3
 from src import validate_db
+from pathlib import Path
 
 def main() -> None:
     conn = validate_db.get_connection(Path(__file__).parent / 'sen.db')
