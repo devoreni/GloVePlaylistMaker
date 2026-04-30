@@ -4,6 +4,7 @@ from mutagen import File
 from mutagen.mp3 import MP3
 from mutagen.mp4 import MP4
 from mutagen.wave import WAVE
+from src import config
 
 def get_audio_metadata(file_path: str | Path) -> dict:
     file_path = Path(file_path)
@@ -40,6 +41,6 @@ def get_audio_metadata(file_path: str | Path) -> dict:
     return metadata
 
 if __name__ == '__main__':
-    file_path = Path(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'unprocessed', 'Paparazzi.m4a'))
+    file_path = config.UNPROCESSED_AUDIO_DIR / 'Shake It Off.mp3'
     metadata = get_audio_metadata(file_path)
     print(metadata)
