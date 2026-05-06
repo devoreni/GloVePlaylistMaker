@@ -8,4 +8,5 @@ cd my-project
 uv sync           # installs dependencies from uv.lock
 uv pip install -e .   # registers the src package in the environment
 uv run python src/main.py   # works from any directory
+winget install ffmpeg
 ```
