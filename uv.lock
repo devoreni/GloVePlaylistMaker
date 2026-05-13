@@ -412,6 +412,7 @@ dependencies = [
     { name = "numpy" },
     { name = "pydub" },
     { name = "pyqt6" },
+    { name = "scikit-learn" },
     { name = "torch" },
     { name = "torchaudio" },
 ]
@@ -425,6 +426,7 @@ requires-dist = [
     { name = "numpy", specifier = ">=2.4.4" },
     { name = "pydub", git = "https://github.com/devoreni/pydub-escape-fix" },
     { name = "pyqt6", specifier = ">=6.11.0" },
+    { name = "scikit-learn", specifier = ">=1.8.0" },
     { name = "torch", specifier = ">=2.11.0" },
     { name = "torchaudio", specifier = ">=2.11.0" },
 ]

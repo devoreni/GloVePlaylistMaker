@@ -1,45 +1,11 @@
 import torch
-import torchaudio.transforms as T
 import matplotlib
 matplotlib.use('QtAgg')
 import matplotlib.pyplot as plt
 import numpy as np
-from pydub import AudioSegment
 from src import config
 from pathlib import Path
-
-
-def load_audio(path: str | Path) -> tuple[torch.Tensor, int]:
-    """Load any audio format via pydub (uses ffmpeg under the hood)."""
-    audio = AudioSegment.from_file(str(path))
-    sr = audio.frame_rate
-    samples = np.array(audio.get_array_of_samples(), dtype=np.float32)
-    samples /= float(2 ** (audio.sample_width * 8 - 1))  # normalize to [-1.0, 1.0]
-
-    if audio.channels > 1:
-        samples = samples.reshape(-1, audio.channels).T  # [channels, samples]
-    else:
-        samples = samples[np.newaxis, :]                 # [1, samples]
-
-    return torch.from_numpy(samples), sr
-
-def generate_mel_spectrogram(path: str | Path) -> tuple[torch.Tensor, torch.Tensor, int]:
-    # Load audio
-    SPEECH_WAVEFORM, SAMPLE_RATE = load_audio(path)
-
-    # Mel spectrogram transform
-    mel_spectrogram = T.MelSpectrogram(
-        sample_rate=SAMPLE_RATE,
-        n_fft=2048,        # FFT window size
-        hop_length=512,    # step size between windows
-        n_mels=128,        # number of mel filterbanks
-    )
-    to_db = T.AmplitudeToDB()  # convert power values to decibels for visualization
-
-    mel_spec = mel_spectrogram(SPEECH_WAVEFORM)
-    mel_spec_db = to_db(mel_spec)
-
-    return mel_spec_db, SPEECH_WAVEFORM, SAMPLE_RATE
+from pprint import pprint
 
 def plot_waveform_and_spectrogram(waveform: torch.Tensor, mel_spectrogram: torch.Tensor) -> None:
     # Plot
@@ -65,6 +31,67 @@ def plot_waveform_and_spectrogram(waveform: torch.Tensor, mel_spectrogram: torch
     fig.tight_layout()
     plt.show()
 
+
+
+
 if __name__ == '__main__':
-    mel_spec, waveform, _ = generate_mel_spectrogram(Path(config.UNPROCESSED_AUDIO_DIR) / 'Paparazzi.m4a')
-    plot_waveform_and_spectrogram(waveform, mel_spec)
+    mel_spec, _, _ = generate_mel_spectrogram(Path(config.UNPROCESSED_AUDIO_DIR) / 'Blank Space.mp3')
+    matrix = np.transpose(mel_spec.numpy()[0])
+    bs_model = get_gaussian_mixture(matrix)
+    bs_components = [(x, w) for x, w in enumerate(bs_model.weights_) if w > 0.01]
+    for i, j in bs_components:
+        print(bs_components)
+
+    mel_spec, _, _ = generate_mel_spectrogram(Path(config.UNPROCESSED_AUDIO_DIR) / 'Shake It Off.mp3')
+    matrix = np.transpose(mel_spec.numpy()[0])
+    sio_model = get_gaussian_mixture(matrix)
+    sio_components = [(x, w) for x, w in enumerate(sio_model.weights_) if w > 0.01]
+    for i, j in sio_components:
+        print(sio_components)
+
+    mel_spec, _, _ = generate_mel_spectrogram(Path(config.UNPROCESSED_AUDIO_DIR) / 'Last Stand.m4a')
+    matrix = np.transpose(mel_spec.numpy()[0])
+    ls_model = get_gaussian_mixture(matrix)
+    ls_components = [(x, w) for x, w in enumerate(ls_model.weights_) if w > 0.01]
+    for i, j in ls_components:
+        print(ls_components)
+
+    bs_on_bs = bs_model.score_samples(bs_model.means_)
+    pprint(bs_on_bs)
+    print(sorted(bs_on_bs, reverse=True)[:3])
+    print()
+
+    bs_on_sio = bs_model.score_samples(sio_model.means_)
+    pprint(bs_on_sio)
+    print(sorted(bs_on_sio, reverse=True)[:3])
+    print()
+
+    sio_on_bs = sio_model.score_samples(bs_model.means_)
+    pprint(sio_on_bs)
+    print(sorted(sio_on_bs, reverse=True)[:3])
+    print()
+
+    bs_on_ls = bs_model.score_samples(ls_model.means_)
+    pprint(bs_on_ls)
+    print(sorted(bs_on_ls, reverse=True)[:3])
+
+
+
+
+    # This will evaluate to True
+    #my_model = get_gaussian_mixture(matrix)
+    #my_model_dupe = get_gaussian_mixture(matrix)
+    #x = pickle.dumps(my_model)
+    #y = pickle.dumps(my_model2)
+    #if x == y:
+    #    print('objects are the same')
+
+
+
+    #for i in range(250):
+    #    print(my_model.predict_proba([matrix[i]]))
+
+
+
+
+    # plot_waveform_and_spectrogram(waveform, mel_spec)

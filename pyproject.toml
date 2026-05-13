@@ -12,6 +12,7 @@ dependencies = [
     "numpy>=2.4.4",
     "pydub",
     "pyqt6>=6.11.0",
+    "scikit-learn>=1.8.0",
     "torch>=2.11.0",
     "torchaudio>=2.11.0",
 ]
